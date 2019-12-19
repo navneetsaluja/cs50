@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    int f = atoi(argv[1]);
+
     // remember filenames
     char *infile = argv[1];
     char *outfile = argv[2];
@@ -52,6 +54,22 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Unsupported file format.\n");
         return 4;
     }
+
+    int oldbiWidth = bi.biWidth;
+    int oldbiHeight = bi.biHeight;
+    int newbiWidth = oldbiWidth * f;
+    int newbiHeight = oldbiHeight * f;
+
+    int inPadding = (4 - (oldbiWidth * sizeof(RGBTRIPLE)) % 4) % 4;
+    int outPadding = (4 - (newbiWidth * sizeof(RGBTRIPLE)) % 4) % 4;
+
+    bi.biHeight = newbiHeight;
+    bi.biWidth = newbiWidth;
+    bi.biSizeImage = ( (sizeof(RGBTRIPLE) * newbiWidth) + outPadding) * abs(newbiHeight);
+    bf.bfSize = bi.biSizeImage + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+
+
 
     // write outfile's BITMAPFILEHEADER
     fwrite(&bf, sizeof(BITMAPFILEHEADER), 1, outptr);
