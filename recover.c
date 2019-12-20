@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
 
     unsigned char buffer[512];
 
-    int openFileTracker = 0;
-    int jpegTracker = 0;
+    int trackopen = 0;
+    int trackjpeg = 0;
 
     char filename[10];
     FILE *img_file;
@@ -37,29 +37,29 @@ int main(int argc, char *argv[])
             (buffer[3] & 0xf0) == 0xe0)
         {
 
-        if (openFileTracker)
+        if (trackopen)
             {
                 fclose(img_file);
 
-                openFileTracker = 0;
+                trackopen = 0;
 
-                sprintf(filename, "%03d.jpg", jpegTracker);
+                sprintf(filename, "%03d.jpg", trackjpeg);
 
                 img_file = fopen(filename, "a");
 
-                openFileTracker = 1;
+                trackopen = 1;
 
-                jpegTracker++;
+                trackjpeg++;
             }
 
-            if (!openFileTracker)
+            if (!trackopen)
             {
-                sprintf(filename, "%03d.jpg", jpegTracker);
+                sprintf(filename, "%03d.jpg", trackjpeg);
                 img_file = fopen(filename, "w");
 
-                openFileTracker = 1;
+                trackopen = 1;
 
-                jpegTracker++;
+                trackjpeg++;
             }
 
             fwrite(&buffer, 512, 1, img_file);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
         else
         {
-            if (openFileTracker)
+            if (trackopen)
             {
                 fwrite(&buffer, 512, 1, img_file);
             }
